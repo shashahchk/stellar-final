@@ -68,8 +68,11 @@ features have been implemented:
     let paymentXDR = ''
     let paymentNetwork = ''
     let tipPercentage = 0
-    $: totalAmount = (parseFloat(sendAmount) || 0) * (1 + tipPercentage / 100)
+    $: totalAmount = (parseFloat(totalRawAmount) || 0) * (1 + tipPercentage / 100)
     $: totalRawAmount = receiptData.items.reduce((total, item) => total + item.price, 0).toFixed(2)
+    $: placeholderEmployee =
+        contacts.getAll().find((contact) => contact.name === receiptData.host)?.name ||
+        'Select Recipient'
 
     /**
      * Check whether or not the account exists and is funded on the Stellar network.
@@ -266,6 +269,8 @@ features have been implemented:
             <li>{item.name} - ${item.price.toFixed(2)}</li>
         {/each}
     </ul>
+     <!-- Total Amount -->
+     <p class="text-right text-lg font-bold"><strong>Total:</strong> ${receiptData.items.reduce((total, item) => total + item.price, 0).toFixed(2)}</p>
 </div>
 
 <!-- Employee -->
@@ -280,7 +285,7 @@ features have been implemented:
         name="destination"
         class="select select-bordered"
     >
-        <option value="" disabled selected>Select Recipient</option>
+        <option value="" disabled selected>{placeholderEmployee}</option>
         {#each $contacts as contact (contact.id)}
             <option value={contact.address}>{contact.name}</option>
         {/each}
@@ -335,9 +340,7 @@ features have been implemented:
                 <div class="join">
                     <div class="grow">
                         <div>
-                            <label for="totalRawAmount" class="label">
-                                <span class="label-text">Bill Amount</span>
-                            </label>
+
                             <div id="totalRawAmount" class="input input-bordered">
                                 {totalRawAmount}
                             </div>
@@ -412,16 +415,10 @@ features have been implemented:
                 <div class="join">
                     <div class="grow">
                         <div>
-                            <input
-                                bind:value={receiveAmount}
-                                on:change={findPaths}
-                                id="receiveAmount"
-                                name="receiveAmount"
-                                type="text"
-                                placeholder="0.01"
-                                class="input join-item input-bordered w-full"
-                                disabled={!strictReceive}
-                            />
+                            
+                            <div id="totalRawAmount" class="input input-bordered">
+                                {totalRawAmount}
+                            </div>
                         </div>
                         <!-- Tipping Options -->
                         <div class="form-control my-5">
@@ -495,14 +492,10 @@ features have been implemented:
         <div class="join">
             <div class="grow">
                 <div>
-                    <input
-                        id="amount"
-                        name="amount"
-                        class="input join-item input-bordered w-full"
-                        type="text"
-                        placeholder="0.01"
-                        bind:value={sendAmount}
-                    />
+    
+                    <div id="totalRawAmount" class="input w-full join-item input-bordered">
+                        {totalRawAmount}
+                    </div>
                     <!-- Tipping Options -->
                     <div class="form-control my-5">
                         <label for="tip" class="label">

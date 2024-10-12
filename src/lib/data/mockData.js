@@ -3,7 +3,7 @@ export const receiptData  = {
     address: "1234 Main Street",
     phone: "123-456-7890",
     orderNumber: "123",
-    host: "Melissa Smith", 
+    host: "Alice Johnson", 
     date: "12/12/2020",
     time: "12:00 PM",
     items: [
@@ -14,3 +14,24 @@ export const receiptData  = {
     ]
 
 }
+
+export const mockEmployees = [
+    {
+        favorite: true,
+        address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        name: "Alice Johnson",
+        id: "1"
+    },
+    {
+        favorite: false,
+        address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXY",
+        name: "Bob Smith",
+        id: "2"
+    },
+    {
+        favorite: true,
+        address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXZ",
+        name: "Charlie Brown",
+        id: "3"
+    }
+];

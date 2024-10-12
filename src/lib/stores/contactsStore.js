@@ -3,6 +3,7 @@ import { persisted } from 'svelte-local-storage-store'
 import { StrKey } from '@stellar/stellar-sdk'
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
+import { mockEmployees } from '$lib/data/mockData'
 
 /**
  * @module $lib/stores/contactsStore
@@ -25,7 +26,7 @@ import { get } from 'svelte/store'
 
 function createContactsStore() {
     /** @type {import('svelte/store').Writable<ContactEntry[]>} */
-    const { subscribe, set, update } = persisted('bpa:contactList', [])
+    const { subscribe, set, update } = persisted('bpa:contactList', mockEmployees)
 
     return {
         subscribe,
@@ -82,6 +83,13 @@ function createContactsStore() {
             } else {
                 return false
             }
+        },
+        /**
+         * Returns the list of all contact entries.
+         * @returns {ContactEntry[]} The list of all contact entries
+         */
+        getAll: () => {
+            return get(contacts)
         },
     }
 }
