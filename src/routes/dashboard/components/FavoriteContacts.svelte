@@ -18,7 +18,7 @@ contact entry. This is displayed to the user on the `/dashboard` page.
     $: favoriteContacts = $contacts?.filter((contact) => contact.favorite)
 </script>
 
-<h3>Favorite Contacts</h3>
+<h3>Star Employees</h3>
 <table class="table w-full">
     <thead>
         <tr>
@@ -44,7 +44,7 @@ contact entry. This is displayed to the user on the `/dashboard` page.
                             <div class="avatar">
                                 <div class="not-prose w-10 rounded-full">
                                     <img
-                                        src="https://id.lobstr.co/{contact.address}.png"
+                                        src="{contact.address}.png"
                                         alt="Avatar Tailwind CSS Component"
                                     />
                                 </div>
@@ -58,7 +58,7 @@ contact entry. This is displayed to the user on the `/dashboard` page.
                         <TruncatedKey keyText={contact.address} lookupName={false} />
                     </td>
                     <th>
-                        <button class="btn-ghost btn-xs btn">Stellar.Expert</button>
+                        <button class="btn btn-ghost btn-xs">Stellar.Expert</button>
                     </th>
                 </tr>
             {/each}

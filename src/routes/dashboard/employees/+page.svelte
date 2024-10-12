@@ -1,10 +1,8 @@
 <!--
 @component
 
-The `/dashboard/contacts` page will allow the user to collect and manage a list
-of contact entries that stores the contact's name and Stellar address. The
-contact can also be flagged/unflagged as a "favorite" contact to be displayed on
-the main `/dashboard` page.
+The employees page allows restaurant managers to manage recurring salary payments to employees subject to their work performance.
+Star employees can be flagged as "favorites".
 -->
 
 <script>
@@ -27,14 +25,13 @@ the main `/dashboard` page.
     }
 </script>
 
-<h1>Contacts</h1>
+<h1>Employees</h1>
 <p>
-    The <code>/dashboard/contacts</code> page will allow the user to collect and manage a list of contact
-    entries that stores the contact's name and Stellar address. The contact can also be flagged/unflagged
-    as a "favorite" contact to be displayed on the main `/dashboard` page.
+    The employees page allows restaurant managers to manage recurring salary payments to employees subject to their work performance.
+    Star employees can be flagged as "favorites".
 </p>
 
-<h3>All contacts</h3>
+<h3>All employees</h3>
 
 <table class="table w-full">
     <thead>
@@ -111,7 +108,7 @@ the main `/dashboard` page.
                         <div class="avatar">
                             <div class="not-prose w-10 rounded-full">
                                 <img
-                                    src="https://id.lobstr.co/{contact.address}.png"
+                                    src="/{contact.image}.jpg"
                                     alt="Avatar Tailwind CSS Component"
                                 />
                             </div>

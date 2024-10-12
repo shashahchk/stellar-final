@@ -3,6 +3,7 @@ import { persisted } from 'svelte-local-storage-store'
 import { StrKey } from '@stellar/stellar-sdk'
 import { error } from '@sveltejs/kit'
 import { get } from 'svelte/store'
+import { mockEmployees } from '$lib/data/mockData'
 
 /**
  * @module $lib/stores/contactsStore
@@ -19,13 +20,14 @@ import { get } from 'svelte/store'
  * @typedef {Object} ContactEntry
  * @property {boolean} favorite Whether or not the contact is marked as a "favorite"
  * @property {string} address Public Stellar address associated with this contact
+ * @property {string} [image] Profile picture of the contact
  * @property {string} name Human-readable name to identify this contact with
  * @property {string} id Unique identifier for this contact entry
  */
 
 function createContactsStore() {
     /** @type {import('svelte/store').Writable<ContactEntry[]>} */
-    const { subscribe, set, update } = persisted('bpa:contactList', [])
+    const { subscribe, set, update } = persisted('bpa:contactList', mockEmployees)
 
     return {
         subscribe,
@@ -82,6 +84,13 @@ function createContactsStore() {
             } else {
                 return false
             }
+        },
+        /**
+         * Returns the list of all contact entries.
+         * @returns {ContactEntry[]} The list of all contact entries
+         */
+        getAll: () => {
+            return get(contacts)
         },
     }
 }

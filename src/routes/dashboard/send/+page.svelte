@@ -25,7 +25,7 @@ features have been implemented:
     // We import any Svelte components we will need
     import ConfirmationModal from '$lib/components/ConfirmationModal.svelte'
     import InfoAlert from '$lib/components/InfoAlert.svelte'
-
+    import { receiptData } from '$lib/data/mockData'
     // We import any stores we will need to read and/or write
     import { infoMessage } from '$lib/stores/alertsStore'
     import { contacts } from '$lib/stores/contactsStore'
@@ -67,6 +67,12 @@ features have been implemented:
     let strictReceive = false
     let paymentXDR = ''
     let paymentNetwork = ''
+    let tipPercentage = 0
+    $: totalAmount = (parseFloat(totalRawAmount) || 0) * (1 + tipPercentage / 100)
+    $: totalRawAmount = receiptData.items.reduce((total, item) => total + item.price, 0).toFixed(2)
+    $: placeholderEmployee =
+        contacts.getAll().find((contact) => contact.name === receiptData.host)?.name ||
+        'Select Recipient'
 
     /**
      * Check whether or not the account exists and is funded on the Stellar network.
@@ -183,32 +189,32 @@ features have been implemented:
                   memo: memo,
               })
             : pathPayment && strictReceive
-            ? await createPathPaymentStrictReceiveTransaction({
-                  source: data.publicKey,
-                  sourceAsset: sendAsset,
-                  sourceAmount: sendAmount,
-                  destination: otherDestination ? otherPublicKey : destination,
-                  destinationAsset: receiveAsset,
-                  destinationAmount: receiveAmount,
-                  memo: memo,
-              })
-            : pathPayment && !strictReceive
-            ? await createPathPaymentStrictSendTransaction({
-                  source: data.publicKey,
-                  sourceAsset: sendAsset,
-                  sourceAmount: sendAmount,
-                  destination: otherDestination ? otherPublicKey : destination,
-                  destinationAsset: receiveAsset,
-                  destinationAmount: receiveAmount,
-                  memo: memo,
-              })
-            : await createPaymentTransaction({
-                  source: data.publicKey,
-                  destination: otherDestination ? otherPublicKey : destination,
-                  asset: sendAsset,
-                  amount: sendAmount,
-                  memo: memo,
-              })
+              ? await createPathPaymentStrictReceiveTransaction({
+                    source: data.publicKey,
+                    sourceAsset: sendAsset,
+                    sourceAmount: sendAmount,
+                    destination: otherDestination ? otherPublicKey : destination,
+                    destinationAsset: receiveAsset,
+                    destinationAmount: receiveAmount,
+                    memo: memo,
+                })
+              : pathPayment && !strictReceive
+                ? await createPathPaymentStrictSendTransaction({
+                      source: data.publicKey,
+                      sourceAsset: sendAsset,
+                      sourceAmount: sendAmount,
+                      destination: otherDestination ? otherPublicKey : destination,
+                      destinationAsset: receiveAsset,
+                      destinationAmount: receiveAmount,
+                      memo: memo,
+                  })
+                : await createPaymentTransaction({
+                      source: data.publicKey,
+                      destination: otherDestination ? otherPublicKey : destination,
+                      asset: sendAsset,
+                      amount: sendAmount,
+                      memo: memo,
+                  })
 
         // Set the component variables to hold the transaction details
         paymentXDR = transaction
@@ -225,27 +231,61 @@ features have been implemented:
     }
 </script>
 
-<h1>Send a Payment</h1>
+<h1>Your Receipt</h1>
 <p>
-    The <code>/dashboard/send</code> page allows the user to send payments to other Stellar addresses.
-    They can select from a dropdown containing their contact list names, or they could enter their own
-    "Other..." public key.
+    Our secure payment allows you to directly tip our employees with no hidden costs. Simply select
+    from a dropdown containing a list of the current shift's employees, or enter their account key.
 </p>
-<p>Please complete the fields below to send a payment on the Stellar network.</p>
+<p>Please complete the fields below to manage your receipt.</p>
 
-<!-- Destination -->
+<!-- Receipt -->
+<div class="receipt mx-auto max-w-lg rounded-lg bg-white p-5 shadow-md">
+    <!-- Restaurant Info -->
+    <div class="mb-4 text-center">
+        <h2 class="text-2xl font-bold">{receiptData.restaurantName}</h2>
+        <p>{receiptData.address}</p>
+        <p>{receiptData.phone}</p>
+    </div>
+
+    <!-- Order and Host Info -->
+    <div class="mb-4 flex justify-between">
+        <div class="text-left">
+            <p><strong>Order Number:</strong> {receiptData.orderNumber}</p>
+            <p><strong>Host:</strong> {receiptData.host}</p>
+        </div>
+        <!-- Date and Time Info -->
+        <div class="text-right">
+            <p><strong>Date:</strong> {receiptData.date}</p>
+            <p><strong>Time:</strong> {receiptData.time}</p>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <!-- Items List -->
+    <h3 class="mb-2 text-left text-xl font-semibold">Items</h3>
+    <ul class="mb-4 list-inside list-disc text-left">
+        {#each receiptData.items as item}
+            <li>{item.name} - ${item.price.toFixed(2)}</li>
+        {/each}
+    </ul>
+     <!-- Total Amount -->
+     <p class="text-right text-lg font-bold"><strong>Total:</strong> ${receiptData.items.reduce((total, item) => total + item.price, 0).toFixed(2)}</p>
+</div>
+
+<!-- Employee -->
 <div class="form-control my-5">
     <label for="destination" class="label">
-        <span class="label-text">Destination</span>
+        <span class="label-text">Employee</span>
     </label>
     <select
         bind:value={destination}
         on:change={() => checkDestination(destination)}
         id="destination"
         name="destination"
-        class="select-bordered select"
+        class="select select-bordered"
     >
-        <option value="" disabled selected>Select Recipient</option>
+        <option value="" disabled selected>{placeholderEmployee}</option>
         {#each $contacts as contact (contact.id)}
             <option value={contact.address}>{contact.name}</option>
         {/each}
@@ -267,7 +307,7 @@ features have been implemented:
             name="otherPublicKey"
             type="text"
             placeholder="G..."
-            class="input-bordered input"
+            class="input input-bordered"
         />
     </div>
 {/if}
@@ -283,7 +323,7 @@ features have been implemented:
     <div class="form-control my-1">
         <label class="label cursor-pointer">
             <span class="label-text">Send and Receive different assets?</span>
-            <input type="checkbox" class="toggle-accent toggle" bind:checked={pathPayment} />
+            <input type="checkbox" class="toggle toggle-accent" bind:checked={pathPayment} />
         </label>
     </div>
 {/if}
@@ -300,20 +340,40 @@ features have been implemented:
                 <div class="join">
                     <div class="grow">
                         <div>
-                            <input
-                                bind:value={sendAmount}
-                                on:change={findPaths}
-                                id="sendAmount"
-                                name="sendAmount"
-                                placeholder="0.01"
-                                type="text"
-                                class="input-bordered input join-item w-full"
-                                disabled={strictReceive}
-                            />
+
+                            <div id="totalRawAmount" class="input input-bordered">
+                                {totalRawAmount}
+                            </div>
+                        </div>
+                        <!-- Tipping Options -->
+                        <div class="form-control my-5">
+                            <label for="tip" class="label">
+                                <span class="label-text">Tip</span>
+                            </label>
+                            <select
+                                id="tip"
+                                name="tip"
+                                class="select select-bordered"
+                                bind:value={tipPercentage}
+                            >
+                                <option value="0">No Tip</option>
+                                <option value="10">10%</option>
+                                <option value="20">20%</option>
+                                <option value="30">30%</option>
+                            </select>
+                        </div>
+                        <!-- Total Amount -->
+                        <div class="form-control my-5">
+                            <label for="totalAmount" class="label">
+                                <span class="label-text">Total Amount</span>
+                            </label>
+                            <div id="totalAmount" class="input input-bordered">
+                                {totalAmount}
+                            </div>
                         </div>
                     </div>
                     <select
-                        class="select-bordered select join-item"
+                        class="join-item select select-bordered"
                         bind:value={sendAsset}
                         on:change={selectPath}
                     >
@@ -355,22 +415,42 @@ features have been implemented:
                 <div class="join">
                     <div class="grow">
                         <div>
-                            <input
-                                bind:value={receiveAmount}
-                                on:change={findPaths}
-                                id="receiveAmount"
-                                name="receiveAmount"
-                                type="text"
-                                placeholder="0.01"
-                                class="input-bordered input join-item w-full"
-                                disabled={!strictReceive}
-                            />
+                            
+                            <div id="totalRawAmount" class="input input-bordered">
+                                {totalRawAmount}
+                            </div>
+                        </div>
+                        <!-- Tipping Options -->
+                        <div class="form-control my-5">
+                            <label for="tip" class="label">
+                                <span class="label-text">Tip</span>
+                            </label>
+                            <select
+                                id="tip"
+                                name="tip"
+                                class="select select-bordered"
+                                bind:value={tipPercentage}
+                            >
+                                <option value="0">No Tip</option>
+                                <option value="10">10%</option>
+                                <option value="20">20%</option>
+                                <option value="30">30%</option>
+                            </select>
+                        </div>
+                        <!-- Total Amount -->
+                        <div class="form-control my-5">
+                            <label for="totalAmount" class="label">
+                                <span class="label-text">Total Amount</span>
+                            </label>
+                            <div id="totalAmount" class="input input-bordered">
+                                {totalAmount}
+                            </div>
                         </div>
                     </div>
                     <select
                         bind:value={receiveAsset}
                         on:change={selectPath}
-                        class="select-bordered select join-item"
+                        class="join-item select select-bordered"
                     >
                         <option value="" disabled>Select asset</option>
                         {#if !strictReceive && availablePaths}
@@ -412,20 +492,42 @@ features have been implemented:
         <div class="join">
             <div class="grow">
                 <div>
-                    <input
-                        id="amount"
-                        name="amount"
-                        class="input-bordered input join-item w-full"
-                        type="text"
-                        placeholder="0.01"
-                        bind:value={sendAmount}
-                    />
+    
+                    <div id="totalRawAmount" class="input w-full join-item input-bordered">
+                        {totalRawAmount}
+                    </div>
+                    <!-- Tipping Options -->
+                    <div class="form-control my-5">
+                        <label for="tip" class="label">
+                            <span class="label-text">Tip</span>
+                        </label>
+                        <select
+                            id="tip"
+                            name="tip"
+                            class="select select-bordered"
+                            bind:value={tipPercentage}
+                        >
+                            <option value="0">No Tip</option>
+                            <option value="10">10%</option>
+                            <option value="20">20%</option>
+                            <option value="30">30%</option>
+                        </select>
+                    </div>
+                    <!-- Total Amount -->
+                    <div class="form-control my-5">
+                        <label for="totalAmount" class="label">
+                            <span class="label-text">Total Amount</span>
+                        </label>
+                        <div id="totalAmount" class="input input-bordered">
+                            {totalAmount}
+                        </div>
+                    </div>
                 </div>
             </div>
             <select
                 id="asset"
                 name="asset"
-                class="select-bordered select join-item"
+                class="join-item select select-bordered"
                 bind:value={sendAsset}
                 disabled={createAccount}
             >
@@ -454,7 +556,7 @@ features have been implemented:
         id="memo"
         name="memo"
         type="text"
-        class="input-bordered input"
+        class="input input-bordered"
         placeholder="Maximum 28 characters"
         maxlength="28"
         bind:value={memo}
@@ -464,7 +566,7 @@ features have been implemented:
 
 <!-- Button -->
 <div class="form-control my-5">
-    <button class="btn-primary btn" on:click={previewPaymentTransaction}>Preview Transaction</button
+    <button class="btn btn-primary" on:click={previewPaymentTransaction}>Preview Transaction</button
     >
 </div>
 <!-- /Button -->
