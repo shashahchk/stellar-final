@@ -67,6 +67,8 @@ features have been implemented:
     let strictReceive = false
     let paymentXDR = ''
     let paymentNetwork = ''
+    let tipPercentage = 0
+    $: totalAmount = (parseFloat(sendAmount) || 0) * (1 + tipPercentage / 100)
 
     /**
      * Check whether or not the account exists and is funded on the Stellar network.
@@ -183,32 +185,32 @@ features have been implemented:
                   memo: memo,
               })
             : pathPayment && strictReceive
-            ? await createPathPaymentStrictReceiveTransaction({
-                  source: data.publicKey,
-                  sourceAsset: sendAsset,
-                  sourceAmount: sendAmount,
-                  destination: otherDestination ? otherPublicKey : destination,
-                  destinationAsset: receiveAsset,
-                  destinationAmount: receiveAmount,
-                  memo: memo,
-              })
-            : pathPayment && !strictReceive
-            ? await createPathPaymentStrictSendTransaction({
-                  source: data.publicKey,
-                  sourceAsset: sendAsset,
-                  sourceAmount: sendAmount,
-                  destination: otherDestination ? otherPublicKey : destination,
-                  destinationAsset: receiveAsset,
-                  destinationAmount: receiveAmount,
-                  memo: memo,
-              })
-            : await createPaymentTransaction({
-                  source: data.publicKey,
-                  destination: otherDestination ? otherPublicKey : destination,
-                  asset: sendAsset,
-                  amount: sendAmount,
-                  memo: memo,
-              })
+              ? await createPathPaymentStrictReceiveTransaction({
+                    source: data.publicKey,
+                    sourceAsset: sendAsset,
+                    sourceAmount: sendAmount,
+                    destination: otherDestination ? otherPublicKey : destination,
+                    destinationAsset: receiveAsset,
+                    destinationAmount: receiveAmount,
+                    memo: memo,
+                })
+              : pathPayment && !strictReceive
+                ? await createPathPaymentStrictSendTransaction({
+                      source: data.publicKey,
+                      sourceAsset: sendAsset,
+                      sourceAmount: sendAmount,
+                      destination: otherDestination ? otherPublicKey : destination,
+                      destinationAsset: receiveAsset,
+                      destinationAmount: receiveAmount,
+                      memo: memo,
+                  })
+                : await createPaymentTransaction({
+                      source: data.publicKey,
+                      destination: otherDestination ? otherPublicKey : destination,
+                      asset: sendAsset,
+                      amount: sendAmount,
+                      memo: memo,
+                  })
 
         // Set the component variables to hold the transaction details
         paymentXDR = transaction
@@ -225,13 +227,11 @@ features have been implemented:
     }
 </script>
 
-<h1>Send a Payment</h1>
+<h1>Your Receipt</h1>
 <p>
-    The <code>/dashboard/send</code> page allows the user to send payments to other Stellar addresses.
-    They can select from a dropdown containing their contact list names, or they could enter their own
-    "Other..." public key.
+    Our secure payment allows you to directly tip our employees with no hidden costs. Simply select  from a dropdown containing a list of the current shift's employees, or enter their  account key.
 </p>
-<p>Please complete the fields below to send a payment on the Stellar network.</p>
+<p>Please complete the fields below to manage your receipt.</p>
 
 <!-- Destination -->
 <div class="form-control my-5">
@@ -311,6 +311,32 @@ features have been implemented:
                                 disabled={strictReceive}
                             />
                         </div>
+                        <!-- Tipping Options -->
+                    <div class="form-control my-5">
+                        <label for="tip" class="label">
+                            <span class="label-text">Tip</span>
+                        </label>
+                        <select
+                            id="tip"
+                            name="tip"
+                            class="select select-bordered"
+                            bind:value={tipPercentage}
+                        >
+                            <option value="0">No Tip</option>
+                            <option value="10">10%</option>
+                            <option value="20">20%</option>
+                            <option value="30">30%</option>
+                        </select>
+                    </div>
+                    <!-- Total Amount -->
+                    <div class="form-control my-5">
+                        <label for="totalAmount" class="label">
+                            <span class="label-text">Total Amount</span>
+                        </label>
+                        <div id="totalAmount" class="input input-bordered">
+                            {totalAmount}
+                        </div>
+                    </div>
                     </div>
                     <select
                         class="select-bordered select join-item"
@@ -366,6 +392,32 @@ features have been implemented:
                                 disabled={!strictReceive}
                             />
                         </div>
+                        <!-- Tipping Options -->
+                    <div class="form-control my-5">
+                        <label for="tip" class="label">
+                            <span class="label-text">Tip</span>
+                        </label>
+                        <select
+                            id="tip"
+                            name="tip"
+                            class="select select-bordered"
+                            bind:value={tipPercentage}
+                        >
+                            <option value="0">No Tip</option>
+                            <option value="10">10%</option>
+                            <option value="20">20%</option>
+                            <option value="30">30%</option>
+                        </select>
+                    </div>
+                    <!-- Total Amount -->
+                    <div class="form-control my-5">
+                        <label for="totalAmount" class="label">
+                            <span class="label-text">Total Amount</span>
+                        </label>
+                        <div id="totalAmount" class="input input-bordered">
+                            {totalAmount}
+                        </div>
+                    </div>
                     </div>
                     <select
                         bind:value={receiveAsset}
@@ -420,6 +472,32 @@ features have been implemented:
                         placeholder="0.01"
                         bind:value={sendAmount}
                     />
+                    <!-- Tipping Options -->
+                    <div class="form-control my-5">
+                        <label for="tip" class="label">
+                            <span class="label-text">Tip</span>
+                        </label>
+                        <select
+                            id="tip"
+                            name="tip"
+                            class="select select-bordered"
+                            bind:value={tipPercentage}
+                        >
+                            <option value="0">No Tip</option>
+                            <option value="10">10%</option>
+                            <option value="20">20%</option>
+                            <option value="30">30%</option>
+                        </select>
+                    </div>
+                    <!-- Total Amount -->
+                    <div class="form-control my-5">
+                        <label for="totalAmount" class="label">
+                            <span class="label-text">Total Amount</span>
+                        </label>
+                        <div id="totalAmount" class="input input-bordered">
+                            {totalAmount}
+                        </div>
+                    </div>
                 </div>
             </div>
             <select
