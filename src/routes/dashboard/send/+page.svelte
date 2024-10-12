@@ -233,10 +233,10 @@ features have been implemented:
 </p>
 <p>Please complete the fields below to manage your receipt.</p>
 
-<!-- Destination -->
+<!-- Employee -->
 <div class="form-control my-5">
     <label for="destination" class="label">
-        <span class="label-text">Destination</span>
+        <span class="label-text">Employee</span>
     </label>
     <select
         bind:value={destination}
