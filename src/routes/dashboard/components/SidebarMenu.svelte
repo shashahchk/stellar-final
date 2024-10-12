@@ -16,7 +16,7 @@ list of menu links that can be used to navigate throughout the dashboard.
         { route: '/dashboard/send', text: 'Payments' },
         { route: '/dashboard/assets', text: 'Assets' },
         { route: '/dashboard/employees', text: 'Employees' },
-        { route: '/dashboard/transfers', text: 'Transfers' },
+        // { route: '/dashboard/transfers', text: 'Transfers' },
     ]
 </script>
 

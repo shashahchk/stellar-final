@@ -18,24 +18,14 @@
     import RecentPayments from './components/RecentPayments.svelte'
     // `FavoriteContacts` will display all favorited contacts
     import FavoriteContacts from './components/FavoriteContacts.svelte'
-    // `TransferHistory` will display anchor transfer status information
-    import TransferHistory from './components/TransferHistory.svelte'
 </script>
 
 <!-- `AssetStats` displayed at the top of the dashboard -->
 <AssetStats />
 
-<!-- `RecentPayments` and `FavoriteContacts` displayed as two columns on larger screens -->
-<div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
-    <div class="overflow-x-auto">
-        <RecentPayments />
-    </div>
-    <div class="overflow-x-auto">
-        <FavoriteContacts />
-    </div>
-</div>
-
-<!-- `TransferHistory` displayed at the bottom of the dashboard -->
 <div class="overflow-x-auto">
-    <TransferHistory />
+    <RecentPayments />
+</div>
+<div class="overflow-x-auto">
+    <FavoriteContacts />
 </div>

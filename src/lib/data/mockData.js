@@ -19,6 +19,7 @@ export const mockEmployees = [
     {
         favorite: true,
         address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        image: "woman1.jpg",
         name: "Alice Johnson",
         id: "1"
     },
@@ -26,12 +27,14 @@ export const mockEmployees = [
         favorite: false,
         address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXY",
         name: "Bob Smith",
+        image: "woman1.jpg",
         id: "2"
     },
     {
         favorite: true,
         address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXZ",
         name: "Charlie Brown",
+        image: "woman2.jpg",
         id: "3"
     }
 ];

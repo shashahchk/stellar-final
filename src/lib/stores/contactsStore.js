@@ -20,6 +20,7 @@ import { mockEmployees } from '$lib/data/mockData'
  * @typedef {Object} ContactEntry
  * @property {boolean} favorite Whether or not the contact is marked as a "favorite"
  * @property {string} address Public Stellar address associated with this contact
+ * @property {string} [image] Profile picture of the contact
  * @property {string} name Human-readable name to identify this contact with
  * @property {string} id Unique identifier for this contact entry
  */
