@@ -18,7 +18,7 @@ contact entry. This is displayed to the user on the `/dashboard` page.
     $: favoriteContacts = $contacts?.filter((contact) => contact.favorite)
 </script>
 
-<h3>Favorite Contacts</h3>
+<h3>Star Employees</h3>
 <table class="table w-full">
     <thead>
         <tr>
