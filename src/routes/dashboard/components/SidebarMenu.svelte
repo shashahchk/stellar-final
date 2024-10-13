@@ -6,7 +6,7 @@
     import { page } from '$app/stores'
 
     const dashboardRoutes = [
-        { route: '/dashboard/send', text: 'Payments' },
+        { route: '/dashboard/pendingReceipts', text: 'Pending Customer Receipts' },
         { route: '/dashboard/employees', text: 'Employees' },
     ]
 </script>

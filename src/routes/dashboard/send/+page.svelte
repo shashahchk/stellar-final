@@ -184,9 +184,9 @@
     let paymentNetwork = ''
     let tipPercentage = 0
     $: totalAmount = (parseFloat(totalRawAmount) || 0) * (1 + tipPercentage / 100)
-    $: totalRawAmount = receiptData.items.reduce((total, item) => total + item.price, 0).toFixed(2)
+    $: totalRawAmount = receiptData[0].items.reduce((total, item) => total + item.price, 0).toFixed(2)
     $: placeholderEmployee =
-        contacts.getAll().find((contact) => contact.name === receiptData.host)?.name ||
+        contacts.getAll().find((contact) => contact.name === receiptData[0].host)?.name ||
         'Select Recipient'
 
     /**
@@ -412,21 +412,21 @@
 <div class="receipt mx-auto max-w-lg rounded-lg bg-white p-5 shadow-md">
     <!-- Restaurant Info -->
     <div class="mb-4 text-center">
-        <h2 class="text-2xl font-bold">{receiptData.restaurantName}</h2>
-        <p>{receiptData.address}</p>
-        <p>{receiptData.phone}</p>
+        <h2 class="text-2xl font-bold">{receiptData[0].restaurantName}</h2>
+        <p>{receiptData[0].address}</p>
+        <p>{receiptData[0].phone}</p>
     </div>
 
     <!-- Order and Host Info -->
     <div class="mb-4 flex justify-between">
         <div class="text-left">
-            <p><strong>Order Number:</strong> {receiptData.orderNumber}</p>
-            <p><strong>Host:</strong> {receiptData.host}</p>
+            <p><strong>Order Number:</strong> {receiptData[0].orderNumber}</p>
+            <p><strong>Host:</strong> {receiptData[0].host}</p>
         </div>
         <!-- Date and Time Info -->
         <div class="text-right">
-            <p><strong>Date:</strong> {receiptData.date}</p>
-            <p><strong>Time:</strong> {receiptData.time}</p>
+            <p><strong>Date:</strong> {receiptData[0].date}</p>
+            <p><strong>Time:</strong> {receiptData[0].time}</p>
         </div>
     </div>
 
@@ -435,12 +435,12 @@
     <!-- Items List -->
     <h3 class="mb-2 text-left text-xl font-semibold">Items</h3>
     <ul class="mb-4 list-inside list-disc text-left">
-        {#each receiptData.items as item}
+        {#each receiptData[0].items as item}
             <li>{item.name} - ${item.price.toFixed(2)}</li>
         {/each}
     </ul>
      <!-- Total Amount -->
-     <p class="text-right text-lg font-bold"><strong>Total:</strong> ${receiptData.items.reduce((total, item) => total + item.price, 0).toFixed(2)}</p>
+     <p class="text-right text-lg font-bold"><strong>Total:</strong> ${receiptData[0].items.reduce((total, item) => total + item.price, 0).toFixed(2)}</p>
 </div>
 
 <!-- Employee -->

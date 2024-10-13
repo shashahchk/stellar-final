@@ -1,20 +1,51 @@
-export const receiptData  = {
-    restaurantName: "FISH & CHIPS RESTAURANT",
-    address: "1234 Main Street",
-    phone: "123-456-7890",
-    orderNumber: "123",
-    host: "Alice Johnson", 
-    date: "12/12/2020",
-    time: "12:00 PM",
-    items: [
-        { name: "Fish & Chips", price: 12.99 },
-        { name: "Lemonade", price: 2.99 },
-        { name: "Tartar Sauce", price: 1.99 },
-        { name: "Ketchup", price: 0.99 }
-    ]
-
-}
-
+export const receiptData = [
+    {
+        restaurantName: "FISH & CHIPS RESTAURANT",
+        address: "1234 Main Street",
+        phone: "123-456-7890",
+        orderNumber: "123",
+        host: "Alice Johnson",
+        date: "12/12/2020",
+        time: "12:00 PM",
+        tableNumber: "5",
+        items: [
+            { name: "Fish & Chips", price: 12.99 },
+            { name: "Lemonade", price: 2.99 },
+            { name: "Tartar Sauce", price: 1.99 },
+            { name: "Ketchup", price: 0.99 }
+        ]
+    },
+    {
+        restaurantName: "FISH & CHIPS RESTAURANT",
+        address: "1234 Main Street",
+        phone: "123-456-7890",
+        orderNumber: "124",
+        host: "Bob Smith",
+        date: "12/13/2020",
+        time: "1:00 PM",
+        tableNumber: "3",
+        items: [
+            { name: "Fish & Chips", price: 12.99 },
+            { name: "Coleslaw", price: 3.49 },
+            { name: "Iced Tea", price: 2.49 }
+        ]
+    },
+    {
+        restaurantName: "FISH & CHIPS RESTAURANT",
+        address: "1234 Main Street",
+        phone: "123-456-7890",
+        orderNumber: "125",
+        host: "Charlie Brown",
+        date: "12/14/2020",
+        time: "6:00 PM",
+        tableNumber: "7",
+        items: [
+            { name: "Fish & Chips", price: 12.99 },
+            { name: "Mushy Peas", price: 1.99 },
+            { name: "Soda", price: 1.99 }
+        ]
+    }
+];
 export const mockEmployees = [
     {
         favorite: true,
