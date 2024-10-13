@@ -1,7 +1,7 @@
 <div class="hero min-h-screen bg-yellow-100">
 
     <center>
-        <img src="https://banner2.cleanpng.com/20180410/ggq/avf52f2tf.webp">
+        <img src="https://banner2.cleanpng.com/20180410/ggq/avf52f2tf.webp" width="30px">
     </center>
     <div class="hero-content text-center">
         <div class="max-w-md">
