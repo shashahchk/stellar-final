@@ -108,7 +108,7 @@ Star employees can be flagged as "favorites".
                         <div class="avatar">
                             <div class="not-prose w-10 rounded-full">
                                 <img
-                                    src="/{contact.image}.jpg"
+                                    src={contact.image}
                                     alt="Avatar Tailwind CSS Component"
                                 />
                             </div>
