@@ -1,0 +1,47 @@
+stellar contract build
+
+stellar contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/hello_world.wasm \
+  --source mediator \
+  --network testnet
+
+stellar contract invoke \
+  --id CDZSQUV6NRVIOCE4J3R5COYXDKL4UQ5S543VT3YAXS5KJ5UYMFH3XR2B \
+  --source mediator \
+  --network testnet \
+  -- \
+  init \
+  --employer restaurantowner1 \
+  --worker lowlychef \
+  --customer customer 
+
+
+stellar contract invoke \
+  --id CDZSQUV6NRVIOCE4J3R5COYXDKL4UQ5S543VT3YAXS5KJ5UYMFH3XR2B \
+  --source mediator \
+  --network testnet \
+  -- \
+  deposit_salary \
+  --from restaurantowner1 \
+  --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC \
+  --salary_amount 5 \
+  --time_bound_timestamp 5 
+
+stellar contract invoke \
+  --id CDZSQUV6NRVIOCE4J3R5COYXDKL4UQ5S543VT3YAXS5KJ5UYMFH3XR2B \
+  --source mediator \
+  --network testnet \
+  -- \
+  deposit_tip \
+  --from restaurantowner1 \
+  --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC \
+  --amount 5 
+
+stellar contract invoke \
+  --id CDZSQUV6NRVIOCE4J3R5COYXDKL4UQ5S543VT3YAXS5KJ5UYMFH3XR2B \
+  --source lowlychef \
+  --network testnet \
+  -- \
+  execute_payment \
+  --claimant lowlychef \
+  --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC

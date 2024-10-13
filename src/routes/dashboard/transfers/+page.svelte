@@ -1,40 +1,24 @@
 <!--
 @component
 
-The `/dashboard/transfers` page will allow the user to view assets they hold
-trustlines for, which have infrastructure available to utilize for asset
-transfers. A few series of server queries find out which assets the user can
-transfer, which protocols are available for those transfers (SEP-6 and SEP-24
-currently), check the authentication status of the user with the relevant
-anchor, and present them with buttons that will allow them to initiate a
-transfer with the anchor.
-
-Heads-up this page has _a lot_ going on, and it can be easy to get lost or mixed
-up. We'll try to comment things in a sensible way, but you may need to take a
-couple read-throughs to understand everything.
 -->
 
 <script>
-    // `export let data` allows us to pull in any parent load data for use here.
     /** @type {import('./$types').PageData} */
     export let data
     console.log('routes/dashboard/transfers/+page.svelte data', data)
 
-    // We import things from external packages that will be needed
     import { Buffer } from 'buffer'
     import { LogInIcon, LogOutIcon } from 'svelte-feather-icons'
 
-    // We import any Svelte components we will need
     import TransferModalSep6 from './components/TransferModalSep6.svelte'
     import ConfirmationModal from '$lib/components/ConfirmationModal.svelte'
 
-    // We import any stores we will need to read and/or write
     import { invalidateAll } from '$app/navigation'
     import { transfers } from '$lib/stores/transfersStore'
     import { walletStore } from '$lib/stores/walletStore'
     import { webAuthStore } from '$lib/stores/webAuthStore'
 
-    // We import some of our `$lib` functions
     import { submit } from '$lib/stellar/horizonQueries'
     import { fetchStellarToml } from '$lib/stellar/sep1'
     import { getSep6Info } from '$lib/stellar/sep6'
@@ -42,7 +26,6 @@ couple read-throughs to understand everything.
     import { getSep24Info, initiateTransfer24 } from '$lib/stellar/sep24'
     import { createPaymentTransaction } from '$lib/stellar/transactions'
 
-    // The `open` Svelte context is used to open the confirmation modal
     import { getContext } from 'svelte'
     const { open } = getContext('simple-modal')
 
@@ -321,11 +304,11 @@ couple read-throughs to understand everything.
 </p>
 <p>
     <strong>SEP-6</strong> provides a <em>programmatic</em> method of interacting with the anchor
-    server. The entire flow to initiate a transfer is handled here, in <em>BasicPay</em>.
+    server. The entire flow to initiate a transfer is handled here, in <em>TipTap</em>.
 </p>
 <p>
     <strong>SEP-24</strong> provides an <em>interactive</em> method of utilizing the anchor server.
-    The flow begins here in <em>BasicPay</em>, but the user is handed over to the anchor server for
+    The flow begins here in <em>TipTap</em>, but the user is handed over to the anchor server for
     most of the transfer initiation.
 </p>
 

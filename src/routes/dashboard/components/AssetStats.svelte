@@ -1,15 +1,9 @@
 <!--
 @component
 
-The `AssetStats` component implements a chunk of statistics that we can display
-to the user on the `/dashboard` page. We are showing the user the asset balances
-for each asset they hold a trustline to.
 -->
 
 <script>
-    // We import the `page` store into this component so we can access the
-    // loaded data the `+page.svelte` file has access to without having to pass
-    // props to this component
     import { page } from '$app/stores'
 </script>
 

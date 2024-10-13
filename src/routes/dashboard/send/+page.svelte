@@ -1,4 +1,126 @@
+<style>
+    .loading-button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        background-color: #007bff; /* Button background color */
+        color: white; /* Button text color */
+        border: none; /* Remove default border */
+        border-radius: 4px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+    }
+
+    .loading-button.is-loading {
+        cursor: wait;
+        animation: pulse 1s infinite ease-in-out;
+        background-color: grey; /* Change to a shade lighter or darker for effect */
+    }
+
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border: 4px solid transparent;
+        border-top-color: white;
+        border-right-color: white;
+        border-radius: 50%;
+        animation: spin 1.5s linear infinite, rotate 1.5s linear infinite;
+        margin-right: 8px;
+        display: inline-block;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.01); }
+    }
+
+    @keyframes rotate {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(180deg); }
+    }
+
+    .loading-button:disabled {
+        opacity: 0.8;
+        cursor: not-allowed;
+    }
+
+    .modal-overlay {
+      position: fixed; /* Make the overlay fixed to cover the whole viewport */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+      display: flex; /* Center the modal */
+      justify-content: center; /* Center horizontally */
+      align-items: center; /* Center vertically */
+      z-index: 1000; /* Ensure it appears on top */
+    }
+  
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      position: relative;
+      max-width: 500px;
+      width: 90%; /* Ensure responsiveness */
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    }
+  
+    .close-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  
+    .close-button:hover {
+      background-color: #0056b3;
+    }
+</style>
+  
 <script>
+    export let isLoading = false;
+    export let isComplete = false;
+
+    const conversionRate = 100;
+
+    function convertPoundsToTokens(pounds, tipPercentage) {
+        // Apply the tip to the pound value
+        const totalPounds = pounds + (pounds * (tipPercentage / 100));
+
+        // Convert the final pound value to tokens
+        const tokens = Math.round(totalPounds * conversionRate);
+        
+        return tokens;
+    }
+
+
+    export let numberOfTokens = 100;
+    export let poundValue = 100;
+    export let show = false;
+    export let transactionLink = "https://stellar.expert/explorer/testnet/tx/f7a96e4a727a2a7bc950c38f3a729501110978e3e1fc536430a08acd27b10df4";
+    export let onClose = () => {};
+  
+    function handleClose() {
+      show = false;
+    }
+
+    export const openModal = () => {
+      show = true
+    }
+
     // `export let data` allows us to pull in any parent load data for use here.
     /** @type {import('./$types').PageData} */
     export let data
@@ -26,6 +148,18 @@
         createPathPaymentStrictSendTransaction,
         createPaymentTransaction,
     } from '$lib/stellar/transactions'
+
+    import {
+        Keypair,
+        Contract,
+        SorobanRpc,
+        TransactionBuilder,
+        Networks,
+        BASE_FEE,
+        nativeToScVal,
+        Address,
+    } from "@stellar/stellar-sdk";
+
 
     // The `open` Svelte context is used to open the confirmation modal
     import { getContext } from 'svelte'
@@ -161,9 +295,109 @@
      * @async
      * @function previewPaymentTransaction
      */
+
+    async function fetchData() {
+        try {
+            const response = await fetch('http://localhost:5000/deploy');
+            const data = await response.json();
+            console.log(data);
+            if (data.success) {
+                // Remove the newline character from the "output" value
+                const output = data.output.trim();
+                console.log(output);
+                return output;
+            } else {
+                console.error("Request was not successful.");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return null;
+        }
+    }
+
+    // Call the function
+
     const previewPaymentTransaction = async () => {
         console.log(destination);
         console.log(tipPercentage);
+
+    const sourceKeypair = Keypair.fromSecret(
+        $walletStore.devInfo.secretKey
+    );
+
+    const server = new SorobanRpc.Server(
+    "https://soroban-testnet.stellar.org:443",
+  );
+
+
+    const contract = new Contract("CAOJVTII2ASZXO2T225K7KRMB6YFPKMQCY3P3L6545NCYZTTGMBJ73JK");
+    const sourceAccount = await server.getAccount(sourceKeypair.publicKey());
+
+    numberOfTokens = convertPoundsToTokens(18.96, tipPercentage);
+    poundValue = numberOfTokens + (numberOfTokens * (tipPercentage / 100)); 
+
+    isLoading = true;
+
+    let builtTransaction = new TransactionBuilder(sourceAccount, {
+        fee: BASE_FEE,
+        networkPassphrase: Networks.TESTNET,
+    })
+    .addOperation(
+      contract.call(
+        "make_payments",
+        nativeToScVal(Address.fromString($walletStore.publicKey)),
+        nativeToScVal([Address.fromString(destination)]),
+        nativeToScVal(Address.fromString('GCXQH2KHFMNA6ISZ6GGXMEEEGS2NRXLGKXQ3NKUS5IUZL5XGGAQ7HOYE')),
+        nativeToScVal(Address.fromString('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC')),
+        nativeToScVal(numberOfTokens, { type: "i128" }),
+        nativeToScVal(tipPercentage, { type: "i128" }),
+      ),
+    )
+    .setTimeout(30)
+    .build();
+
+    let preparedTransaction = await server.prepareTransaction(builtTransaction);
+    preparedTransaction.sign(sourceKeypair);
+
+    try {
+        let sendResponse = await server.sendTransaction(preparedTransaction);
+        console.log(`Sent transaction: ${JSON.stringify(sendResponse)}`);
+
+        if (sendResponse.status === "PENDING") {
+        let getResponse = await server.getTransaction(sendResponse.hash);
+        // Poll `getTransaction` until the status is not "NOT_FOUND"
+        while (getResponse.status === "NOT_FOUND") {
+            console.log("Waiting for transaction confirmation...");
+            // See if the transaction is complete
+            getResponse = await server.getTransaction(sendResponse.hash);
+            // Wait one second
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        console.log(`getTransaction response: ${JSON.stringify(getResponse)}`);
+
+        if (getResponse.status === "SUCCESS") {
+            // Make sure the transaction's resultMetaXDR is not empty
+            if (!getResponse.resultMetaXdr) {
+            throw "Empty resultMetaXDR in getTransaction response";
+            }
+            transactionLink = 'https://stellar.expert/explorer/testnet/tx/' + sendResponse.hash;
+            isLoading = false;
+            isComplete = true;
+            openModal();
+        } else {
+            throw `Transaction failed: ${getResponse.resultXdr}`;
+        }
+        } else {
+            throw sendResponse.errorResultXdr;
+        }
+    } catch (err) {
+        // Catch and report any errors we've thrown
+        console.log("Sending transaction failed");
+        console.log(JSON.stringify(err));
+    }
+
     }
 </script>
 
@@ -221,7 +455,7 @@
         name="destination"
         class="select select-bordered"
     >
-        <option value="" disabled selected>{placeholderEmployee}</option>
+        <option value="" disabled selected></option>
         {#each $contacts as contact (contact.id)}
             <option value={contact.address}>{contact.name}</option>
         {/each}
@@ -254,15 +488,6 @@
     <InfoAlert />
 {/if}
 <!-- /InfoAlert -->
-
-{#if createAccount !== null && !createAccount}
-    <div class="form-control my-1">
-        <label class="label cursor-pointer">
-            <span class="label-text">Send and Receive different assets?</span>
-            <input type="checkbox" class="toggle toggle-accent" bind:checked={pathPayment} />
-        </label>
-    </div>
-{/if}
 
 <!-- PathPayment -->
 {#if pathPayment}
@@ -299,13 +524,11 @@
                             </select>
                         </div>
                         <!-- Total Amount -->
-                        <div class="form-control my-5">
-                            <label for="totalAmount" class="label">
-                                <span class="label-text">Total Amount</span>
-                            </label>
-                            <div id="totalAmount" class="input input-bordered">
-                                {totalAmount}
-                            </div>
+                        <label for="totalAmount" class="label">
+                            <span class="label-text">Total Amount</span>
+                        </label>
+                        <div id="totalAmount">
+                            {totalAmount}
                         </div>
                     </div>
                     <select
@@ -483,8 +706,29 @@
 <!-- /PathPayment -->
 
 <!-- Button -->
+{#if !isComplete}
 <div class="form-control my-5">
-    <button class="btn btn-primary" on:click={previewPaymentTransaction}>Preview Transaction</button
-    >
+    <button class="loading-button btn btn-primary" on:click={previewPaymentTransaction} disabled={isLoading} class:is-loading={isLoading}>
+        {#if isLoading}
+            <span class="spinner"></span> Processing...
+        {:else}
+            Make Payment
+        {/if}
+    </button>
 </div>
+{:else}
+<p>Thanks!</p>
+{/if}
+
+{#if show}
+  <div class="modal-overlay" on:click={handleClose}>
+    <div class="modal-content" on:click|stopPropagation>
+      <slot></slot>
+      <h3>Transaction Complete!</h3>
+      <p> We sent {numberOfTokens} tokens (£{totalAmount}). You can view the verified transaction <a href="{transactionLink}">here</a>.</p>
+      <button class="btn btn-primary" on:click={handleClose}>Close</button>
+    </div>
+  </div>
+{/if}
+
 <!-- /Button -->

@@ -1,25 +1,35 @@
 <!--
 @component
 
-The `RecentPayments` component will display to the user relevant information
-about any recent payments that have been made to or from their account.
-
-The data is loaded in the dashboard's `+layout.js` load function, and queries
-the Horizon server as `server.payments().forAccount('G...')`, which will query
-for regular payments, path payments, account merge operations, and claimable
-balances.
 -->
 
 <script>
-    // We import any Svelte components we will need
     import TruncatedKey from '$lib/components/TruncatedKey.svelte'
 
-    // We import any stores we will need to read and/or write
     import { page } from '$app/stores'
 
-    // We import the `EffectRecord` type from the stellar-sdk so we can
-    // predictably display who was the recipient of an `account_merge` operation
     /** @typedef {import('stellar-sdk').ServerApi.EffectRecord} EffectRecord */
+    console.log($page.data.payments);
+
+    export function calculateTotalSent(operation) {
+        let totalSent = 0;
+        // Iterate over each operation in the data
+        console.log(operation);
+        // Check if asset_balance_changes exists
+        if (operation.asset_balance_changes) {
+            // Iterate through asset_balance_changes
+            operation.asset_balance_changes.forEach(change => {
+            // Check if the change is a transfer and from the source account
+            if (change.type === 'transfer' && change.from === operation.source_account) {
+                // Add the amount to totalSent
+                totalSent += parseFloat(change.amount);
+                }
+            });
+        }
+
+        return totalSent;
+    }
+
 </script>
 
 <h3>Recent Payments</h3>
@@ -29,7 +39,6 @@ balances.
             <th>Amount</th>
             <th>Asset</th>
             <th>Direction</th>
-            <th>Address</th>
         </tr>
     </thead>
     <tbody>
@@ -46,13 +55,15 @@ balances.
                                 {parseFloat(effect.amount).toFixed(2)}
                             {/each}
                         {/await}
+                    {:else if payment.asset_balance_changes}
+                        {calculateTotalSent(payment)}
                     {/if}
                 </th>
                 <td>
                     {#if payment.type === 'create_account' || payment.asset_type === 'native' || payment.type === 'account_merge'}
                         XLM
                     {:else}
-                        {payment.asset_code}
+                        XLM
                     {/if}
                 </td>
                 <td>
@@ -60,27 +71,6 @@ balances.
                         Received
                     {:else}
                         Sent
-                    {/if}
-                </td>
-                <td>
-                    {#if 'to' in payment}
-                        {#if payment.to === $page.data.publicKey}
-                            <TruncatedKey keyText={payment.from} />
-                        {:else}
-                            <TruncatedKey keyText={payment.to} />
-                        {/if}
-                    {:else if 'funder' in payment}
-                        {#if payment.funder === $page.data.publicKey}
-                            <TruncatedKey keyText={payment.account} />
-                        {:else}
-                            <TruncatedKey keyText={payment.funder} />
-                        {/if}
-                    {:else if 'into' in payment}
-                        {#if payment.into === $page.data.publicKey}
-                            <TruncatedKey keyText={payment.account} />
-                        {:else}
-                            <TruncatedKey keyText={payment.into} />
-                        {/if}
                     {/if}
                 </td>
             </tr>

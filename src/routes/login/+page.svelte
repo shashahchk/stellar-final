@@ -1,36 +1,22 @@
 <!--
 @component
 
-The `/login` page offers the user a chance login and confirm the pincode they
-used when registering for the app.
-
-_Note:_ In this example application, our login process is not **nearly** as
-robust as one would expect or desire from a real-world application. While there
-are ways one could get around the login page, if they really wanted to, the
-pincode is still required before the keypair can be decrypted to sign anything
-for submission to the network.
 -->
 
 <script>
-    // The `export let data` declaration allows us to receive and use the page
-    // load data from our `+page.js` file.
     /** @type {import('./$types').PageData} */
     export let data
 
-    // We import any Svelte components we will need
     import ErrorAlert from '$lib/components/ErrorAlert.svelte'
     import TruncatedKey from '$lib/components/TruncatedKey.svelte'
 
-    // We import any stores we will need to read and/or write
     import { goto } from '$app/navigation'
     import { errorMessage } from '$lib/stores/alertsStore'
     import { walletStore } from '$lib/stores/walletStore'
 
-    // Define some component variables that will be used throughout the page
     let pincode = ''
 
     /**
-     * Our `login` function ensures the the user has entered a valid pincode for the encrypted keypair, and then redirects them to the dashboard page.
      * @async
      * @function login
      */
