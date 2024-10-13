@@ -167,6 +167,7 @@
     const { open } = getContext('simple-modal')
 
     // Define some component variables that will be used throughout the page
+    let selectedCustomers = [];
     let destination = ''
     $: otherDestination = destination === 'other'
     let otherPublicKey = ''
@@ -617,7 +618,14 @@
 <label for="destination" class="label">
     <span class="label-text">Who helped you today?</span>
 </label>
-<ImageGrid onSelectionChange={()=>{}}></ImageGrid>
+<ImageGrid onSelectionChange={(images)=>{
+    console.log(images);
+    let selectedCustomerIds = images;
+    let selectedCustomerObjects = $contacts.filter((elem, index)=>{
+        return selectedCustomerIds.indexOf(index) != -1
+    }).map(customer=>Address.fromString(customer.address));
+    console.log(selectedCustomerObjects);
+}}></ImageGrid>
 
 <!-- Button -->
 {#if !isComplete}

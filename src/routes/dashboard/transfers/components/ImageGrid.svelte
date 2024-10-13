@@ -5,10 +5,10 @@
 
   // Sample data for images
   let images = [
-    { id: 0, src: 'https://media.istockphoto.com/id/1683003966/photo/smiling-woman.jpg?s=612x612&w=0&k=20&c=m_v19IzMmouXHq67aTrqYjtAvsDJwvmxzG8DKiVnzdw=', description: 'Alice Johnson' },
-    { id: 1, src: 'https://images.pexels.com/photos/6248856/pexels-photo-6248856.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', description: 'Bob Smith' },
+    { id: 0, src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw9JZbsJE4aTF1SIp8Ytk7P7A62HQskbmvgg&s', description: 'Alice Johnson' },
+    { id: 1, src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_YywG_8PeFm6bYNVrfWRS_xBNdNkvHZhM9w&s', description: 'Bob Smith' },
     { id: 2, src: 'https://img.freepik.com/premium-photo/young-african-american-waiter-man-hold-tray_521733-6356.jpg?w=740', description: 'Charlie Brown' },
-    { id: 3, src: 'https://londondrinksguide.com/en/blog/images/w/1270/LondonDrinksGuide-10062022070129000000-633ec399bfc1d.jpg', description: 'George Clooney' },
+    { id: 3, src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl4E3oJ_zOoBVQZLjry0piHlrc6mKntxxcqw&s', description: 'George Clooney' },
     // Add more images as needed
   ];
 
@@ -31,6 +31,7 @@
           selectedImages = [...selectedImages, image.id]
       }
       images=[...images];
+      handleSelectionChange();
   }
 
   // Function to check if an image is selected
