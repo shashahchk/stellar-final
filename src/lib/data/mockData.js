@@ -36,5 +36,12 @@ export const mockEmployees = [
         name: "Charlie Brown",
         image: "woman2.jpg",
         id: "3"
+    },
+    {
+        favourite: false,
+        address: "GBAODDLR7OZK75JICEF46UNZ4KS3VF3OBTJNISDEZ73HXKEBL2IJRCD5",
+        name: "George Clooney",
+        image: "https://londondrinksguide.com/en/blog/images/w/1270/LondonDrinksGuide-10062022070129000000-633ec399bfc1d.jpg",
+        id: "4"
     }
 ];

@@ -163,6 +163,7 @@
 
     // The `open` Svelte context is used to open the confirmation modal
     import { getContext } from 'svelte'
+    import ImageGrid from '../transfers/components/ImageGrid.svelte'
     const { open } = getContext('simple-modal')
 
     // Define some component variables that will be used throughout the page
@@ -445,9 +446,6 @@
 
 <!-- Employee -->
 <div class="form-control my-5">
-    <label for="destination" class="label">
-        <span class="label-text">Employee</span>
-    </label>
     <select
         bind:value={destination}
         on:change={() => checkDestination(destination)}
@@ -523,39 +521,7 @@
                                 <option value="30">30%</option>
                             </select>
                         </div>
-                        <!-- Total Amount -->
-                        <label for="totalAmount" class="label">
-                            <span class="label-text">Total Amount</span>
-                        </label>
-                        <div id="totalAmount">
-                            {totalAmount}
-                        </div>
                     </div>
-                    <select
-                        class="join-item select select-bordered"
-                        bind:value={sendAsset}
-                        on:change={selectPath}
-                    >
-                        <option value="" disabled>Select asset</option>
-                        {#if strictReceive && availablePaths}
-                            {#each availablePaths as path}
-                                {#if path.source_asset_type === 'native'}
-                                    <option value="native">XLM</option>
-                                {:else}
-                                    {@const assetString = `${path.source_asset_code}:${path.source_asset_issuer}`}
-                                    <option value={assetString}>{path.source_asset_code}</option>
-                                {/if}
-                            {/each}
-                        {:else if !strictReceive}
-                            <option value="native">XLM</option>
-                            {#each data.balances as balance}
-                                {#if 'asset_code' in balance}
-                                    {@const assetString = `${balance.asset_code}:${balance.asset_issuer}`}
-                                    <option value={assetString}>{balance.asset_code}</option>
-                                {/if}
-                            {/each}
-                        {/if}
-                    </select>
                 </div>
             </div>
         </div>
@@ -596,48 +562,7 @@
                                 <option value="30">30%</option>
                             </select>
                         </div>
-                        <!-- Total Amount -->
-                        <div class="form-control my-5">
-                            <label for="totalAmount" class="label">
-                                <span class="label-text">Total Amount</span>
-                            </label>
-                            <div id="totalAmount" class="input input-bordered">
-                                {totalAmount}
-                            </div>
-                        </div>
                     </div>
-                    <select
-                        bind:value={receiveAsset}
-                        on:change={selectPath}
-                        class="join-item select select-bordered"
-                    >
-                        <option value="" disabled>Select asset</option>
-                        {#if !strictReceive && availablePaths}
-                            {#each availablePaths as path}
-                                {#if path.destination_asset_type === 'native'}
-                                    <option value="native">XLM</option>
-                                {:else}
-                                    {@const assetString = `${path.destination_asset_code}:${path.destination_asset_issuer}`}
-                                    <option value={assetString}
-                                        >{path.destination_asset_code}</option
-                                    >
-                                {/if}
-                            {/each}
-                        {:else if strictReceive}
-                            <option value="native">XLM</option>
-                            {#if otherPublicKey || destination}
-                                {#await fetchAccountBalances(otherPublicKey || destination) then balances}
-                                    {#each balances as balance}
-                                        {#if 'asset_code' in balance}
-                                            {@const assetString = `${balance.asset_code}:${balance.asset_issuer}`}
-                                            <option value={assetString}>{balance.asset_code}</option
-                                            >
-                                        {/if}
-                                    {/each}
-                                {/await}
-                            {/if}
-                        {/if}
-                    </select>
                 </div>
             </div>
         </div>
@@ -652,7 +577,7 @@
             <div class="grow">
                 <div>
     
-                    <div id="totalRawAmount" class="input w-full join-item input-bordered">
+                    <div id="totalRawAmount">
                         {totalRawAmount}
                     </div>
                     <!-- Tipping Options -->
@@ -683,27 +608,16 @@
                     </div>
                 </div>
             </div>
-            <select
-                id="asset"
-                name="asset"
-                class="join-item select select-bordered"
-                bind:value={sendAsset}
-                disabled={createAccount}
-            >
-                <option value="" disabled>Select Asset</option>
-                <option value="native">XLM</option>
-                {#each data.balances as balance}
-                    {#if 'asset_code' in balance}
-                        {@const assetString = `${balance.asset_code}:${balance.asset_issuer}`}
-                        <option value={assetString}>{balance.asset_code}</option>
-                    {/if}
-                {/each}
-            </select>
         </div>
     </div>
     <!-- /Amount -->
 {/if}
 <!-- /PathPayment -->
+
+<label for="destination" class="label">
+    <span class="label-text">Who helped you today?</span>
+</label>
+<ImageGrid onSelectionChange={()=>{}}></ImageGrid>
 
 <!-- Button -->
 {#if !isComplete}
