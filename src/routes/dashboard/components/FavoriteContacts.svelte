@@ -37,7 +37,7 @@
                             <div class="avatar">
                                 <div class="not-prose w-10 rounded-full">
                                     <img
-                                        src="{contact.address}.png"
+                                        src="{contact.image}"
                                         alt="Avatar Tailwind CSS Component"
                                     />
                                 </div>
