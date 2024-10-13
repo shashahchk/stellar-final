@@ -10,15 +10,18 @@
 </script>
 
 <header class="navbar bg-yellow-100">
-    <label for="drawer-toggle" class="btn-ghost drawer-button btn-square btn lg:hidden"
+    <label for="drawer-toggle" class="btn btn-square btn-ghost drawer-button lg:hidden"
         ><MenuIcon size="24" /></label
     >
     <div class="flex-1">
-        <a href="/dashboard" class="btn-ghost btn text-xl normal-case">TipTap</a>
+        <a href="/dashboard" class="btn btn-ghost flex items-center space-x-2 text-xl normal-case">
+            <img src="/tipJarIcon.png" alt="tipJar" class="h-10 w-10" />
+            <span>TipTap</span>
+        </a>
     </div>
     <div class="flex-none">
-        <div class="dropdown-end dropdown">
-            <button tabindex="0" class="btn-ghost btn-circle avatar btn">
+        <div class="dropdown dropdown-end">
+            <button tabindex="0" class="avatar btn btn-circle btn-ghost">
                 <div class="w-10 rounded-full">
                     <img
                         src={`https://id.lobstr.co/${$page.data.publicKey}.png`}
@@ -27,7 +30,7 @@
                 </div>
             </button>
             <ul
-                class="menu-compact dropdown-content menu rounded-box z-10 mt-3 w-52 bg-base-100 p-2 shadow"
+                class="menu-compact menu dropdown-content z-10 mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
             >
                 <li>
                     <a href="/dashboard/settings/kyc" class="justify-between">

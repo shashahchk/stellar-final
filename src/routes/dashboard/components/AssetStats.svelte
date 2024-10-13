@@ -9,7 +9,7 @@
 
 <div class="flex items-center gap-5">
     <img class="w-20" src="/fish.png" alt="fishAndChips" />
-    <h1>FISH & CHIPS Co.</h1>
+    <h1>Welcome back, FISH & CHIPS Co.!</h1>
 </div>
 <h3>Restaurant Assets Overview</h3>
 <div class="stats stats-vertical w-full bg-blue-500 text-primary-content shadow lg:stats-horizontal">
