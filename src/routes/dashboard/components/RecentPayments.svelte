@@ -7,6 +7,7 @@
     import TruncatedKey from '$lib/components/TruncatedKey.svelte'
 
     import { page } from '$app/stores'
+    import { generateTableNumber, getOrderNumber } from '$lib/data/mockData'
 
     /** @typedef {import('stellar-sdk').ServerApi.EffectRecord} EffectRecord */
     console.log($page.data.payments);
@@ -36,14 +37,19 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Order Number</th>
             <th>Amount</th>
             <th>Asset</th>
             <th>Direction</th>
+            <th>Table Number</th>
         </tr>
     </thead>
     <tbody>
         {#each $page.data.payments as payment}
             <tr>
+                <th>
+                    {getOrderNumber()}
+                </th>
                 <th>
                     {#if payment.amount}
                         {parseFloat(payment.amount).toFixed(2)}
@@ -72,6 +78,9 @@
                     {:else}
                         Sent
                     {/if}
+                </td>
+                <td>
+                    {generateTableNumber()}
                 </td>
             </tr>
         {/each}

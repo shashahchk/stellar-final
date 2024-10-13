@@ -91,6 +91,7 @@
 </style>
   
 <script>
+    export let selectedCustomerObjects;
     export let isLoading = false;
     export let isComplete = false;
 
@@ -163,9 +164,11 @@
 
     // The `open` Svelte context is used to open the confirmation modal
     import { getContext } from 'svelte'
+    import ImageGrid from '../transfers/components/ImageGrid.svelte'
     const { open } = getContext('simple-modal')
 
     // Define some component variables that will be used throughout the page
+    let selectedCustomers = [];
     let destination = ''
     $: otherDestination = destination === 'other'
     let otherPublicKey = ''
@@ -347,7 +350,7 @@
       contract.call(
         "make_payments",
         nativeToScVal(Address.fromString($walletStore.publicKey)),
-        nativeToScVal([Address.fromString(destination)]),
+        nativeToScVal(selectedCustomerObjects),
         nativeToScVal(Address.fromString('GCXQH2KHFMNA6ISZ6GGXMEEEGS2NRXLGKXQ3NKUS5IUZL5XGGAQ7HOYE')),
         nativeToScVal(Address.fromString('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC')),
         nativeToScVal(numberOfTokens, { type: "i128" }),
@@ -443,27 +446,6 @@
      <p class="text-right text-lg font-bold"><strong>Total:</strong> ${receiptData[0].items.reduce((total, item) => total + item.price, 0).toFixed(2)}</p>
 </div>
 
-<!-- Employee -->
-<div class="form-control my-5">
-    <label for="destination" class="label">
-        <span class="label-text">Employee</span>
-    </label>
-    <select
-        bind:value={destination}
-        on:change={() => checkDestination(destination)}
-        id="destination"
-        name="destination"
-        class="select select-bordered"
-    >
-        <option value="" disabled selected></option>
-        {#each $contacts as contact (contact.id)}
-            <option value={contact.address}>{contact.name}</option>
-        {/each}
-        <option value="other">Other...</option>
-    </select>
-</div>
-<!-- /Destination -->
-
 <!-- OtherDestination -->
 {#if otherDestination}
     <div class="form-control my-5">
@@ -523,39 +505,7 @@
                                 <option value="30">30%</option>
                             </select>
                         </div>
-                        <!-- Total Amount -->
-                        <label for="totalAmount" class="label">
-                            <span class="label-text">Total Amount</span>
-                        </label>
-                        <div id="totalAmount">
-                            {totalAmount}
-                        </div>
                     </div>
-                    <select
-                        class="join-item select select-bordered"
-                        bind:value={sendAsset}
-                        on:change={selectPath}
-                    >
-                        <option value="" disabled>Select asset</option>
-                        {#if strictReceive && availablePaths}
-                            {#each availablePaths as path}
-                                {#if path.source_asset_type === 'native'}
-                                    <option value="native">XLM</option>
-                                {:else}
-                                    {@const assetString = `${path.source_asset_code}:${path.source_asset_issuer}`}
-                                    <option value={assetString}>{path.source_asset_code}</option>
-                                {/if}
-                            {/each}
-                        {:else if !strictReceive}
-                            <option value="native">XLM</option>
-                            {#each data.balances as balance}
-                                {#if 'asset_code' in balance}
-                                    {@const assetString = `${balance.asset_code}:${balance.asset_issuer}`}
-                                    <option value={assetString}>{balance.asset_code}</option>
-                                {/if}
-                            {/each}
-                        {/if}
-                    </select>
                 </div>
             </div>
         </div>
@@ -596,48 +546,7 @@
                                 <option value="30">30%</option>
                             </select>
                         </div>
-                        <!-- Total Amount -->
-                        <div class="form-control my-5">
-                            <label for="totalAmount" class="label">
-                                <span class="label-text">Total Amount</span>
-                            </label>
-                            <div id="totalAmount" class="input input-bordered">
-                                {totalAmount}
-                            </div>
-                        </div>
                     </div>
-                    <select
-                        bind:value={receiveAsset}
-                        on:change={selectPath}
-                        class="join-item select select-bordered"
-                    >
-                        <option value="" disabled>Select asset</option>
-                        {#if !strictReceive && availablePaths}
-                            {#each availablePaths as path}
-                                {#if path.destination_asset_type === 'native'}
-                                    <option value="native">XLM</option>
-                                {:else}
-                                    {@const assetString = `${path.destination_asset_code}:${path.destination_asset_issuer}`}
-                                    <option value={assetString}
-                                        >{path.destination_asset_code}</option
-                                    >
-                                {/if}
-                            {/each}
-                        {:else if strictReceive}
-                            <option value="native">XLM</option>
-                            {#if otherPublicKey || destination}
-                                {#await fetchAccountBalances(otherPublicKey || destination) then balances}
-                                    {#each balances as balance}
-                                        {#if 'asset_code' in balance}
-                                            {@const assetString = `${balance.asset_code}:${balance.asset_issuer}`}
-                                            <option value={assetString}>{balance.asset_code}</option
-                                            >
-                                        {/if}
-                                    {/each}
-                                {/await}
-                            {/if}
-                        {/if}
-                    </select>
                 </div>
             </div>
         </div>
@@ -652,7 +561,7 @@
             <div class="grow">
                 <div>
     
-                    <div id="totalRawAmount" class="input w-full join-item input-bordered">
+                    <div id="totalRawAmount">
                         {totalRawAmount}
                     </div>
                     <!-- Tipping Options -->
@@ -683,27 +592,25 @@
                     </div>
                 </div>
             </div>
-            <select
-                id="asset"
-                name="asset"
-                class="join-item select select-bordered"
-                bind:value={sendAsset}
-                disabled={createAccount}
-            >
-                <option value="" disabled>Select Asset</option>
-                <option value="native">XLM</option>
-                {#each data.balances as balance}
-                    {#if 'asset_code' in balance}
-                        {@const assetString = `${balance.asset_code}:${balance.asset_issuer}`}
-                        <option value={assetString}>{balance.asset_code}</option>
-                    {/if}
-                {/each}
-            </select>
         </div>
     </div>
     <!-- /Amount -->
 {/if}
 <!-- /PathPayment -->
+
+<label for="destination" class="label">
+    <span class="label-text">Who helped you today?</span>
+</label>
+<ImageGrid onSelectionChange={(images)=>{
+    console.log(images);
+    let selectedCustomerIds = images;
+    selectedCustomerObjects = $contacts.filter((elem, index)=>{
+        return selectedCustomerIds.indexOf(index) != -1
+    }).map(customer=>Address.fromString(customer.address));
+    let selectedCustomerAddresses = $contacts.filter((elem, index)=>{
+        return selectedCustomerIds.indexOf(index) != -1
+    }).map(customer=>customer.address);
+}}></ImageGrid>
 
 <!-- Button -->
 {#if !isComplete}
