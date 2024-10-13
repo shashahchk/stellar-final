@@ -8,6 +8,7 @@
     const dashboardRoutes = [
         { route: '/dashboard/pendingReceipts', text: 'Pending Customer Receipts' },
         { route: '/dashboard/employees', text: 'Employees' },
+        { route: '/dashboard/makePayment', text: 'Make payment' },
     ]
 </script>
 
