@@ -91,6 +91,7 @@
 </style>
   
 <script>
+    export let selectedCustomerObjects;
     export let isLoading = false;
     export let isComplete = false;
 
@@ -349,7 +350,7 @@
       contract.call(
         "make_payments",
         nativeToScVal(Address.fromString($walletStore.publicKey)),
-        nativeToScVal([Address.fromString(destination)]),
+        nativeToScVal(selectedCustomerObjects),
         nativeToScVal(Address.fromString('GCXQH2KHFMNA6ISZ6GGXMEEEGS2NRXLGKXQ3NKUS5IUZL5XGGAQ7HOYE')),
         nativeToScVal(Address.fromString('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC')),
         nativeToScVal(numberOfTokens, { type: "i128" }),
@@ -444,24 +445,6 @@
      <!-- Total Amount -->
      <p class="text-right text-lg font-bold"><strong>Total:</strong> ${receiptData.items.reduce((total, item) => total + item.price, 0).toFixed(2)}</p>
 </div>
-
-<!-- Employee -->
-<div class="form-control my-5">
-    <select
-        bind:value={destination}
-        on:change={() => checkDestination(destination)}
-        id="destination"
-        name="destination"
-        class="select select-bordered"
-    >
-        <option value="" disabled selected></option>
-        {#each $contacts as contact (contact.id)}
-            <option value={contact.address}>{contact.name}</option>
-        {/each}
-        <option value="other">Other...</option>
-    </select>
-</div>
-<!-- /Destination -->
 
 <!-- OtherDestination -->
 {#if otherDestination}
@@ -621,10 +604,12 @@
 <ImageGrid onSelectionChange={(images)=>{
     console.log(images);
     let selectedCustomerIds = images;
-    let selectedCustomerObjects = $contacts.filter((elem, index)=>{
+    selectedCustomerObjects = $contacts.filter((elem, index)=>{
         return selectedCustomerIds.indexOf(index) != -1
     }).map(customer=>Address.fromString(customer.address));
-    console.log(selectedCustomerObjects);
+    let selectedCustomerAddresses = $contacts.filter((elem, index)=>{
+        return selectedCustomerIds.indexOf(index) != -1
+    }).map(customer=>customer.address);
 }}></ImageGrid>
 
 <!-- Button -->
