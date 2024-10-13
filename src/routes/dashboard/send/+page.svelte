@@ -1,22 +1,3 @@
-<!--
-@component
-
-The `/dashboard/send` page allows the user to send payments to other Stellar
-addresses. They can select from a dropdown containing their contact list names,
-or they could enter their own "Other..." public key. The following additional
-features have been implemented:
-
-- If the destination address is _not_ a funded account, the user is informed
-  they will be using a `createAccount` operation, and must send at least 1 XLM.
-- The user can select to send/receive different assets, and paths are queried
-  from horizon depending on:
-  1. if they want to strict send or strict receive,
-  2. the source/destination assets they have selected,
-  3. the source/destination accounts, and
-  4. the amount entered for the send/receive value.
-- An optional memo field is available for text-only memos.
--->
-
 <script>
     // `export let data` allows us to pull in any parent load data for use here.
     /** @type {import('./$types').PageData} */
@@ -181,53 +162,8 @@ features have been implemented:
      * @function previewPaymentTransaction
      */
     const previewPaymentTransaction = async () => {
-        let { transaction, network_passphrase } = createAccount
-            ? await createCreateAccountTransaction({
-                  source: data.publicKey,
-                  destination: otherDestination ? otherPublicKey : destination,
-                  amount: sendAmount,
-                  memo: memo,
-              })
-            : pathPayment && strictReceive
-              ? await createPathPaymentStrictReceiveTransaction({
-                    source: data.publicKey,
-                    sourceAsset: sendAsset,
-                    sourceAmount: sendAmount,
-                    destination: otherDestination ? otherPublicKey : destination,
-                    destinationAsset: receiveAsset,
-                    destinationAmount: receiveAmount,
-                    memo: memo,
-                })
-              : pathPayment && !strictReceive
-                ? await createPathPaymentStrictSendTransaction({
-                      source: data.publicKey,
-                      sourceAsset: sendAsset,
-                      sourceAmount: sendAmount,
-                      destination: otherDestination ? otherPublicKey : destination,
-                      destinationAsset: receiveAsset,
-                      destinationAmount: receiveAmount,
-                      memo: memo,
-                  })
-                : await createPaymentTransaction({
-                      source: data.publicKey,
-                      destination: otherDestination ? otherPublicKey : destination,
-                      asset: sendAsset,
-                      amount: sendAmount,
-                      memo: memo,
-                  })
-
-        // Set the component variables to hold the transaction details
-        paymentXDR = transaction
-        paymentNetwork = network_passphrase
-
-        // Open the confirmation modal for the user to confirm or reject the
-        // transaction. We provide our customized `onConfirm` function, but we
-        // have no need to customize and pass an `onReject` function.
-        open(ConfirmationModal, {
-            transactionXDR: paymentXDR,
-            transactionNetwork: paymentNetwork,
-            onConfirm: onConfirm,
-        })
+        console.log(destination);
+        console.log(tipPercentage);
     }
 </script>
 
@@ -545,24 +481,6 @@ features have been implemented:
     <!-- /Amount -->
 {/if}
 <!-- /PathPayment -->
-
-<!-- Memo -->
-<div class="form-control my-5">
-    <label for="memo" class="label">
-        <span class="label-text">Text Memo</span>
-        <span class="label-text-alt">Optional</span>
-    </label>
-    <input
-        id="memo"
-        name="memo"
-        type="text"
-        class="input input-bordered"
-        placeholder="Maximum 28 characters"
-        maxlength="28"
-        bind:value={memo}
-    />
-</div>
-<!-- /Memo -->
 
 <!-- Button -->
 <div class="form-control my-5">

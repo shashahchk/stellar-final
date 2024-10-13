@@ -18,21 +18,21 @@ export const receiptData  = {
 export const mockEmployees = [
     {
         favorite: true,
-        address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        address: "GBVSEKXHL4JK6A2UUYPC463UQTWXTLLQ4MF246C3Y26GXLTROLSKCTOF",
         image: "woman1.jpg",
         name: "Alice Johnson",
         id: "1"
     },
     {
         favorite: false,
-        address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXY",
+        address: "GAEQOSDIE54ZZMSMVGL5REZ47NBN5GJR46XIWOOA6PXDGRWYZONNOFZB",
         name: "Bob Smith",
         image: "woman1.jpg",
         id: "2"
     },
     {
         favorite: true,
-        address: "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXZ",
+        address: "GD4LI5O4M2C76EDD6GWPPFP2L7AREXGBGQL3KAF2OGTWBD3WYSISM5JD",
         name: "Charlie Brown",
         image: "woman2.jpg",
         id: "3"
