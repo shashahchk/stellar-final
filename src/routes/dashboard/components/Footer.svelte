@@ -7,7 +7,7 @@
     import { GithubIcon } from 'svelte-feather-icons'
 </script>
 
-<footer class="footer items-center bg-base-300 p-4">
+<footer class="footer items-center bg-yellow-100 p-4">
     <div class="grid-flow-col items-center">
         <ul class="menu menu-vertical md:menu-horizontal">
             <li>

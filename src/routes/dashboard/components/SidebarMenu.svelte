@@ -12,7 +12,7 @@
     ]
 </script>
 
-<ul class="menu h-full w-80 bg-base-200 p-4 text-base-content">
+<ul class="menu h-full w-80 p-4 text-base-content" style="background-color: #ffeb99;">
     {#each dashboardRoutes as route}
         {@const linkClass = $page.route.id === route.route ? 'active': ''}
         <li>

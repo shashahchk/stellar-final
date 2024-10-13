@@ -32,7 +32,7 @@
     }
 </script>
 
-<div class="hero min-h-screen bg-base-200">
+<div class="hero min-h-screen bg-yellow-100">
     <div class="hero-content flex-col gap-7 lg:flex-row-reverse">
         <div class="text-center lg:text-left">
             <h1 class="text-5xl font-bold">Login now!</h1>
@@ -42,7 +42,7 @@
                 never shared anywhere else.
             </p>
         </div>
-        <div class="card w-full max-w-sm flex-shrink-0 bg-base-100 shadow-2xl">
+        <div class="card w-full max-w-sm flex-shrink-0 bg-yellow-50 shadow-2xl">
             <div class="card-body">
                 <ErrorAlert dismissible={false} />
                 <form on:submit|preventDefault={login}>
@@ -70,7 +70,7 @@
                         />
                     </div>
                     <div class="form-control mt-6">
-                        <button class="btn-primary btn">Login</button>
+                        <button class="bg-pink-600 text-white btn">Login</button>
                     </div>
                 </form>
             </div>

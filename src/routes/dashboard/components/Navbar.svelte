@@ -9,7 +9,7 @@
     import { page } from '$app/stores'
 </script>
 
-<header class="navbar bg-base-300">
+<header class="navbar bg-yellow-100">
     <label for="drawer-toggle" class="btn-ghost drawer-button btn-square btn lg:hidden"
         ><MenuIcon size="24" /></label
     >

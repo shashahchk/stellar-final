@@ -12,7 +12,7 @@
     <h1>FISH & CHIPS Co.</h1>
 </div>
 <h3>Restaurant Assets Overview</h3>
-<div class="stats stats-vertical w-full bg-primary text-primary-content shadow lg:stats-horizontal">
+<div class="stats stats-vertical w-full bg-blue-500 text-primary-content shadow lg:stats-horizontal">
     {#each $page.data.balances as balance}
         <div class="stat flex flex-row justify-between">
             <div>

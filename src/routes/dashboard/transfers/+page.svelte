@@ -330,7 +330,7 @@
                 <button
                     id={`authButton${asset.asset_code}`}
                     name={`authButton${asset.asset_code}`}
-                    class="btn-primary btn"
+                    class="btn btn-primary"
                     on:click={() => auth(asset.home_domain)}>Authenticate with Anchor</button
                 >
                 <div class="form-control">
@@ -345,11 +345,11 @@
                     {#if 'TRANSFER_SERVER' in stellarToml}
                         {#await getSep6Info(asset.home_domain) then sep6Info}
                             <div
-                                class="card rounded-box grid flex-grow place-items-center bg-base-300"
+                                class="card grid flex-grow place-items-center rounded-box bg-yellow-100"
                             >
                                 <div class="card-body w-full">
                                     <h4>SEP-6 Transfers</h4>
-                                    <div class="join-vertical join w-full lg:join-horizontal">
+                                    <div class="join join-vertical w-full lg:join-horizontal">
                                         {#each Object.entries(sep6Info) as [endpoint, details]}
                                             {#if (endpoint === 'deposit' || endpoint === 'withdraw') && asset.asset_code in details}
                                                 <button
@@ -386,11 +386,11 @@
                     {#if 'TRANSFER_SERVER_SEP0024' in stellarToml}
                         {#await getSep24Info(asset.home_domain) then sep24Info}
                             <div
-                                class="card rounded-box grid flex-grow place-items-center bg-base-300"
+                                class="card grid flex-grow place-items-center rounded-box bg-yellow-100"
                             >
                                 <div class="card-body w-full">
                                     <h4>SEP-24 Transfers</h4>
-                                    <div class="join-vertical join w-full lg:join-horizontal">
+                                    <div class="join join-vertical w-full lg:join-horizontal">
                                         {#each Object.entries(sep24Info) as [endpoint, details]}
                                             {#if (endpoint === 'deposit' || endpoint === 'withdraw') && asset.asset_code in details}
                                                 <button
